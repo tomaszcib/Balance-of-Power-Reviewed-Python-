@@ -1,5 +1,7 @@
 # Balance of Power: Reviwed 
 
+**Warning** work in progress
+
 ![version 1.0](https://img.shields.io/badge/Python-3.8%2B-blue.svg) ![Qt 5.7+](https://img.shields.io/badge/PyQt-5.15%2B-brightgreen.svg)
 
 The game takes place in 1980s, a period of geopolitical rivalry between the USA and the USSR. In the Balance of Power, the player takes the role of the American President or General Secretary of the Soviet Union. The goal is to improve the player's country's standing in the world while maintaining the peace and avoiding a nuclear war. A variety of possible means one can use, either military, economic or political, makes the gameplay complex and challenging. 
