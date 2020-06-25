@@ -3,10 +3,11 @@ from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import (QGridLayout, QBoxLayout, QHBoxLayout, QMainWindow,
 							QLabel, QRadioButton, QPushButton, QGroupBox, QDialog, QTableView,
                             QHeaderView, QTableWidget, QButtonGroup, QTableWidgetItem,
-                            QAbstractItemView, QComboBox, QRadioButton)
+                            QAbstractItemView, QComboBox, QRadioButton, QMessageBox)
 import Local
 from functools import partial
-from GameLogic.CrisisHandler import getAdvisorOpinion, doCHumanLoose, doCHumanTough
+from GameLogic.CrisisHandler import getAdvisorOpinion, doCHumanLoose, doCHumanTough, doCrisis
+from GameLogic.MovePlanner import continueNextTurn
 
 class NewsWindow(QDialog):
 
@@ -164,6 +165,8 @@ class NewsWindow(QDialog):
         mode = self._getCurrentMode()
         self.doRefreshNews(mode)
         self.setVisible(True)
+        if mode == 6:    #Reopen the window closed during AI questioning turn, resume AI actions
+            doCrisis(self, self.parent.world, self.news[0])
 
     def doDisplayNewsHeadline(self):
         rowNum = self.table.currentRow()
@@ -234,6 +237,24 @@ class NewsWindow(QDialog):
     def setTableLocked(self, value):
         for i in self.filters: i.setEnabled(value)
         self.table.setEnabled(value)
+
+    def reject(self):
+        """Window can be closed during the crisis. If so, back down in the current crisis"""
+        resBtn = QMessageBox.Yes
+        if self.beingQuestioned or not self.table.isEnabled():
+            resBtn = QMessageBox.question(self, "Balance of Power",
+                Local.strings[Local.CRISIS_FILTER][6] + (Local.strings[Local.CRISIS_FILTER][7] if self.beingQuestioned else ""),
+                QMessageBox.Cancel|QMessageBox.Yes)
+            if resBtn == QMessageBox.Yes:
+                self.doLoose()
+                self.setLocked(False)
+                if self.beingQuestioned and len(self.news) == 0:
+                    self.beingQuestioned = False
+                    self.setVisible(False)
+                    continueNextTurn(self.parent, self.parent.world)
+                QDialog.reject(self)
+            else: return
+        QDialog.reject(self)
 
     def setStrings(self):
         self.table.setHorizontalHeaderLabels(Local.strings[Local.CRISIS_FILTER][8:13])

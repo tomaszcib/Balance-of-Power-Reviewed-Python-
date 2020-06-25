@@ -218,7 +218,7 @@ class MapView(QGraphicsView):
         self.scene().mapPainter.paint(self.scene().mapPainter.mapMode, selected) 
 
     def mouseMoveEvent(self, event):
-        # Use the middle button for scrolling
+        # Use the middle button for dragging the map
         if event.buttons() == Qt.MidButton:
             offset = self.__prevMousePos - event.pos()
             self.__prevMousePos = event.pos()
@@ -236,6 +236,8 @@ class MapView(QGraphicsView):
                 if self.hover != None: self.hover.setHover(True)
 
     def wheelEvent(self, event):
+        # Check if zooming is enabled
+        if not self.parent.menu.options[1].isChecked(): return
         # Zooming event on mouse scroll
         numDegrees = event.angleDelta() / 8
         numSteps = (numDegrees / 15).y()

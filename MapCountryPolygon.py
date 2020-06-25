@@ -29,7 +29,7 @@ class MapCountryPolygon:
             '<img src="data:image/png;base64,{}"> - '.format(self.parent.parent.graphics.flagToolTip[id]))
 
     def setColor(self, color, caption):
-        color.setAlpha(220)
+        color.setAlpha(127 if self.parent.parent.menu.options[2].isChecked() else 220)
         self.value = caption
         for p in self.polys:
             p.setBrush(QBrush(color))

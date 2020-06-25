@@ -8,6 +8,8 @@ class Graphics:
 
     """
     def __init__(self):
+        #Program icon
+        self.progIcon = QPixmap("img/icon175x175.png")
         #Flags
         _img = QPixmap("img/flags.png")
         self.flag = [QPixmap(_img.copy(37 * (i % 10), 22 * (i // 10), 36, 22)) for i in range(80)]

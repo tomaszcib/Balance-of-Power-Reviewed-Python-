@@ -53,6 +53,7 @@ class NewGameWindow(QDialog):
 
     def doSetNewGame(self):
         """Action performed on releasing the 'OK' button"""
+        self.parent.saveOptions()
         level = self.buttonGroups[0].checkedId() + 1
         side = self.buttonGroups[1].checkedId()
         mode = (self.buttonGroups[2].checkedId() == 1)

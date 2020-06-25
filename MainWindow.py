@@ -44,7 +44,7 @@ class MainWindow(QMainWindow):
 		self.addDockWidget(Qt.BottomDockWidgetArea, self.controlPanel)
 		self.addDockWidget(Qt.TopDockWidgetArea, self.statusBar)
 		self.setCentralWidget(self.mapView)
-		self.setWindowIcon(QIcon("img/icon175x175.png"))
+		self.setWindowIcon(QIcon(self.graphics.progIcon))
 		self.controlPanel.connectActions()
 		self.menu = Menu(self)
 		self.setMenuBar(self.menu)

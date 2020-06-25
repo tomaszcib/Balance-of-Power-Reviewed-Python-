@@ -167,6 +167,7 @@ class ControlPanel(QDockWidget):
 
 	def doNextTurn(self):
 		"""Action performed on releasing 'Next turn' button"""
+		self.nextTurnButton.setEnabled(False)
 		prePlanMove(self.parent.world)
 		reactNews(self.parent, self.parent.world)
 		

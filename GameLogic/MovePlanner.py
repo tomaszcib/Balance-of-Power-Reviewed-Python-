@@ -84,6 +84,7 @@ def continueNextTurn(mainWindow, world):
         mainWindow.endGame()
     # Begin a new turn if the game continues
     if not world.winFlag: mainMove(mainWindow, world)
+    mainWindow.controlPanel.nextTurnButton.setEnabled(True)
     mainWindow.controlPanel.drawScores()
     mainWindow.setStatus(-1)
     mainWindow.controlPanel.yearLabel.setText(str(world.year))

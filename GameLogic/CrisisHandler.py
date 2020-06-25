@@ -44,7 +44,7 @@ def reactNews(mainWindow, world):
         if n.isQuestioned:
             mainWindow.newsWindow.beingQuestioned = True
             mainWindow.newsWindow.showUp()
-            doCrisis(mainWindow.newsWindow, world, n)
+            #doCrisis(mainWindow.newsWindow, world, n)
             return
     continueNextTurn(mainWindow, world)
 
