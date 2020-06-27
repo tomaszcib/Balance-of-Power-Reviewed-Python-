@@ -47,7 +47,6 @@ class ControlPanel(QDockWidget):
 		# Map mode panel
 		mapModeGroup = QActionGroup(self)
 		self.mapModeButton = [ActionButton() for i in range(18)]
-		self.mapModeSubcategory = [QMenu() for i in range(3)]
 		self.mapModeAction = [QAction() for i in range(58)]
 		for i in range(18):
 			self.mapModeButton[i].setFixedSize(24, 24)
@@ -60,9 +59,7 @@ class ControlPanel(QDockWidget):
 			if i < 17:
 				self.mapModeButton[i].setAction(self.mapModeAction[i])
 		panelLayout[1].addWidget(self.titleLabel[1], 0, 0, 1, 9)
-		moreModesMenu = QMenu()
-		for i in self.mapModeSubcategory: moreModesMenu.addMenu(i)
-		self.mapModeButton[17].setMenu(moreModesMenu)
+		self.mapModeButton[17].setEnabled(False)
 		
 		# Selection panel
 		self.selectionFlag = QLabel()
@@ -120,8 +117,6 @@ class ControlPanel(QDockWidget):
 			elif 32 <= i <= 34:
 				self.mapModeAction[i].setText(Local.strings[Local.MENU][i - 13])
 			else: self.mapModeAction[i].setText(Local.strings[Local.MENU][i - 4])
-		for i in range(3):
-			self.mapModeSubcategory[i].setTitle(Local.strings[Local.MENU][i + 26])
 
 	def connectActions(self):
 		for i in range(58):

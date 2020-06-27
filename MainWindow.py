@@ -1,7 +1,7 @@
 from PyQt5.QtCore import (QLineF, QPointF, QRectF, Qt)
 from PyQt5.QtGui import (QBrush, QColor, QPainter, QIcon)
 from PyQt5.QtWidgets import (QApplication, QGraphicsView, QGraphicsScene, QGraphicsItem,
-							QGridLayout, QVBoxLayout, QHBoxLayout, QMainWindow,
+							QGridLayout, QVBoxLayout, QHBoxLayout, QMainWindow, QMessageBox,
 							QLabel, QLineEdit, QPushButton, QSpinBox, QStyleFactory, QAction, QActionGroup)
 from GameLogic.World import World
 from MapView import MapView
@@ -51,6 +51,7 @@ class MainWindow(QMainWindow):
 		self.setMenuBar(self.menu)
 		self.loadOptions()
 		self.mapView.resetMapView()
+		self.loadWorld()
 
 	def loadOptions(self):
 		try:
@@ -104,21 +105,32 @@ class MainWindow(QMainWindow):
 			status = 28
 		self.setStatus(status)
 
-	def saveWorld(self):
+	def saveWorld(self, manual=False):
 		"""Save the self.world property into the save.dat file using the pickle protocol"""
-		print("SAVE")
-		try: pickle.dump(self.world, open("save.dat", "wb"))
-		except: print("ERROR SAVING")
+		try:
+			pickle.dump(self.world, open("save.dat", "wb"))
+			if manual:
+				QMessageBox.information(self, Local.strings[Local.MENU][61], Local.strings[Local.MENU][70])
+		except Exception as e:
+			if manual:
+				QMessageBox.critical(self, Local.strings[Local.MENU][61], Local.strings[Local.MENU][71])
 
 	def loadWorld(self):
 		"""Load the pickled save.dat file into the self.world property"""
 		try:
-			self.world = pickle.load(open("save.dat", "rb"))
+			self.setWorld(pickle.load(open("save.dat", "rb")))
+			w = self.world
 			self.setStatus(-1)
-			self.controlPanel.drawScores()		
+			self.controlPanel.drawScores()
+			self.controlPanel.yearLabel.setText(str(w.year))
+			self.controlPanel.switchPlayerButton.setEnabled(w.twoPFlag)
+			self.controlPanel.nextTurnButton.setEnabled(not any((w.winFlag, w.ANWFlag, w.NWFlag, w.beingQuestioned)))
+			if w.winFlag: self.setStatus(27)
+			elif w.ANWFlag or w.NWFlag: self.setStatus(28)
+			else: self.setStatus(-1)
 			self.mapView.scene().mapPainter.recalculateMapBuffer()
 			self.mapView.resetMapView()
-		except: print("ERROR LOADING")
+		except: pass
 
 	def setWorld(self, newWorld):
 		"""Set the self.world property"""
@@ -134,6 +146,11 @@ class MainWindow(QMainWindow):
 		# Move old graphics polygons onto the new world
 		for poly,cntry in zip(polys, self.world.country):
 			cntry.mapPolyObject = poly
+
+	def closeEvent(self, event):
+		if self.menu.options[0].isChecked():
+			self.saveWorld()
+		event.accept()
 
 if __name__ == '__main__':
 	import sys

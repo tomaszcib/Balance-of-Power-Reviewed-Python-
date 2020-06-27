@@ -791,7 +791,9 @@
     "Map zooming",
     "Show terrain",
     "Reset map position",
-    "Language"
+    "Language",
+    "The game has been saved successfully!",
+    "The game could not be saved:"
   ],
 
 

@@ -70,8 +70,6 @@ class NewGameWindow(QDialog):
         self.parent.controlPanel.drawScores()
         painter.recalculateMapBuffer()
         self.parent.mapView.resetMapView()
-        print([c.getInsurgency() for c in self.parent.world.country])
-
 
     def setStrings(self):
         g = Local.WINDOW_NEWGAME

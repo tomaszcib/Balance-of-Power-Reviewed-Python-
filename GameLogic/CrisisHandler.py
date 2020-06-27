@@ -42,7 +42,7 @@ def reactNews(mainWindow, world):
     # Begin process of questioning by the computer
     for n in world.news:
         if n.isQuestioned:
-            mainWindow.newsWindow.beingQuestioned = True
+            world.beingQuestioned = True
             mainWindow.newsWindow.showUp()
             #doCrisis(mainWindow.newsWindow, world, n)
             return
@@ -123,7 +123,7 @@ def hangTough(newsWindow, world, actor):
         world.NWFlag = True
         newsWindow.reactionLine.setText("")
         newsWindow.setVisible(False)
-        newsWindow.beingQuestioned = False
+        world.beingQuestioned = False
         #world.quitFlag = True
         newsWindow.parent.endGame()
     newsWindow.reactionLine.setText(Local.generateReactionLine(actor, crisis.level, False, False))
@@ -308,9 +308,9 @@ def doCHumanLoose(newsWindow, world, news):
         # Click one more time to exit
         else:
             newsWindow.setLocked(False)
-            if newsWindow.beingQuestioned:
+            if world.beingQuestioned:
                 if len(newsWindow.news) == 0:
-                    newsWindow.beingQuestioned = False
+                    world.beingQuestioned = False
                     newsWindow.setVisible(False)
                     continueNextTurn(newsWindow.parent, world)
                 else: doCrisis(newsWindow, world, newsWindow.news[0])

@@ -119,7 +119,6 @@ class NewsWindow(QDialog):
         self.setLayout(mainLayout)
         self.setFixedSize(830, 590)
         self.setModal(True)
-        self.beingQuestioned = False
 
     def filterCondition(self, n, mode):
         if mode == 0: return n.actor == self.parent.world.USA and n.new > n.old     #USA Actions
@@ -224,7 +223,7 @@ class NewsWindow(QDialog):
         self.localNews.setDisabled(value)
 
     def _getCurrentMode(self):
-        if self.beingQuestioned: return 6
+        if self.parent.world.beingQuestioned: return 6
         if self.localNews.isChecked(): return 5
         for i,j in zip(range(5), self.filters):
             if j.isChecked():
@@ -241,15 +240,16 @@ class NewsWindow(QDialog):
     def reject(self):
         """Window can be closed during the crisis. If so, back down in the current crisis"""
         resBtn = QMessageBox.Yes
-        if self.beingQuestioned or not self.table.isEnabled():
+        beingQuestioned = self.parent.world.beingQuestioned
+        if beingQuestioned or not self.table.isEnabled():
             resBtn = QMessageBox.question(self, "Balance of Power",
-                Local.strings[Local.CRISIS_FILTER][6] + (Local.strings[Local.CRISIS_FILTER][7] if self.beingQuestioned else ""),
+                Local.strings[Local.CRISIS_FILTER][6] + (Local.strings[Local.CRISIS_FILTER][7] if beingQuestioned else ""),
                 QMessageBox.Cancel|QMessageBox.Yes)
             if resBtn == QMessageBox.Yes:
                 self.doLoose()
                 self.setLocked(False)
-                if self.beingQuestioned and len(self.news) == 0:
-                    self.beingQuestioned = False
+                if beingQuestioned and len(self.news) == 0:
+                    self.parent.world.beingQuestioned = False
                     self.setVisible(False)
                     continueNextTurn(self.parent, self.parent.world)
                 QDialog.reject(self)

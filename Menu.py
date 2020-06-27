@@ -24,6 +24,7 @@ class Menu(QMenuBar):
 			if i in (3,4): self.submenu[0].addSeparator()
 			self.submenu[0].addAction(self.fileMenuAction[i])
 		self.fileMenuAction[0].triggered.connect(partial(parent.newGameWindow.setVisible, True))
+		self.fileMenuAction[3].triggered.connect(partial(parent.saveWorld, True))
 
 		# Help menu options
 		for i in self.helpMenuAction: self.submenu[3].addAction(i)
@@ -64,9 +65,8 @@ class Menu(QMenuBar):
 		for i in self.submenu: self.addMenu(i)
 
 		# Disable some options that are not available yet
-		for i in range(1,4): self.fileMenuAction[i].setEnabled(False)
+		for i in range(1,3): self.fileMenuAction[i].setEnabled(False)
 		self.helpMenuAction[0].setEnabled(False)
-		self.options[0].setEnabled(False)
 		
 		self.loadLanguages()
 		self.setStrings()

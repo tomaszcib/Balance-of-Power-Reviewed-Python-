@@ -89,6 +89,9 @@ def continueNextTurn(mainWindow, world):
     mainWindow.controlPanel.yearLabel.setText(str(world.year))
     mainWindow.mapView.scene().mapPainter.recalculateMapBuffer()
     mainWindow.mapView.resetMapView()
+    # Autosave on beginning of the turn
+    if mainWindow.menu.options[0].isChecked():
+        mainWindow.saveWorld()
 
 def prePlanMove(world):
     """Preparations made on the beginning of the turn."""

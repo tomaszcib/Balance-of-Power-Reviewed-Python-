@@ -20,6 +20,7 @@ class World:
         self.crisis = Crisis()
         self.ANWFlag, self.NWFlag, self.winFlag = False, False, False
         self.newGame(level, twoPlayer, human)
+        self.beingQuestioned = False
 
     def loadWorldData(self):
         with open("data/world_data.json", "r") as f:
