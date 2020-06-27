@@ -60,27 +60,17 @@ class NewGameWindow(QDialog):
         self.parent.controlPanel.switchPlayerButton.setEnabled(mode)
         self.parent.setStatus(25)
         self.close()
-        # Backup old graphics polygons items
-        polys = [c.mapPolyObject for c in self.parent.world.country]
-        # Make sure all the data are cleared
-        try: del self.parent.world
-        except: pass
-        # Create the new world
-        self.parent.world = World(level, mode, side)
         painter = self.parent.mapView.scene().mapPainter
-        painter.setWorld(self.parent.world)
-        self.parent.updateLevel()
-        # Move old graphics polygons onto the new world
-        for poly,cntry in zip(polys, self.parent.world.country):
-            cntry.mapPolyObject = poly
+        # Set the new world
+        self.parent.setWorld(World(level, mode, side))
         # Execute the first part of the first turn
         prePlanMove(self.parent.world)
         mainMove(self.parent, self.parent.world)
         self.parent.setStatus(-1)
-        self.parent.controlPanel.drawScores()        
+        self.parent.controlPanel.drawScores()
         painter.recalculateMapBuffer()
         self.parent.mapView.resetMapView()
-        #self.parent.controlPanel.newsButton.setText(str(len(self.parent.world.news)) + "events")
+        print([c.getInsurgency() for c in self.parent.world.country])
 
 
     def setStrings(self):

@@ -291,5 +291,10 @@ class Country:
         if count < 1: self.localNews += tmp % Local.generateFirstHead(self)
         if count < 2: self.localNews += tmp % Local.generateLastHead(self)
         self.localNews += "</li>"
+
+    def __getstate__(self):
+        """Function used while pickling the Country during game saving. Exclude mapPolyObject"""
+        return dict((k, v) for (k, v) in self.__dict__.items() if k != "mapPolyObject")
+
     
     

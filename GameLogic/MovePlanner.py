@@ -65,8 +65,7 @@ def continueNextTurn(mainWindow, world):
                             + (s.govtIntv[i.id] * i.milPressure) // 4                       \
                             - (64 * s.insgIntv[i.id])                                       \
                             - (16 * s.pressure[i.id])                                       \
-                            + ((s.treaty[i.id] * s.integrity // 128) * i.milPressure) // 8  \
-                            + 0 if s.id == 1 else 0
+                            + ((s.treaty[i.id] * s.integrity // 128) * i.milPressure) // 8  
                 x //= 8
                 changeDiplOpinion(s, i, x)
             # If playing on multipolar level, make adjustments towards other minor countries, too
@@ -84,9 +83,9 @@ def continueNextTurn(mainWindow, world):
         mainWindow.endGame()
     # Begin a new turn if the game continues
     if not world.winFlag: mainMove(mainWindow, world)
-    mainWindow.controlPanel.nextTurnButton.setEnabled(True)
+    if not world.twoPFlag: mainWindow.controlPanel.nextTurnButton.setEnabled(True)
     mainWindow.controlPanel.drawScores()
-    mainWindow.setStatus(-1)
+    if not world.winFlag: mainWindow.setStatus(-1)
     mainWindow.controlPanel.yearLabel.setText(str(world.year))
     mainWindow.mapView.scene().mapPainter.recalculateMapBuffer()
     mainWindow.mapView.resetMapView()

@@ -18,6 +18,7 @@ from Menu import Menu
 from constants import DEFAULT_OPTS, INAVL_MAP_MODES
 import json
 import time
+import pickle
 import Local
 from functools import partial
 
@@ -103,6 +104,36 @@ class MainWindow(QMainWindow):
 			status = 28
 		self.setStatus(status)
 
+	def saveWorld(self):
+		"""Save the self.world property into the save.dat file using the pickle protocol"""
+		print("SAVE")
+		try: pickle.dump(self.world, open("save.dat", "wb"))
+		except: print("ERROR SAVING")
+
+	def loadWorld(self):
+		"""Load the pickled save.dat file into the self.world property"""
+		try:
+			self.world = pickle.load(open("save.dat", "rb"))
+			self.setStatus(-1)
+			self.controlPanel.drawScores()		
+			self.mapView.scene().mapPainter.recalculateMapBuffer()
+			self.mapView.resetMapView()
+		except: print("ERROR LOADING")
+
+	def setWorld(self, newWorld):
+		"""Set the self.world property"""
+		# Backup old graphics polygons items
+		polys = [c.mapPolyObject for c in self.world.country]
+		# Make sure all the data are cleared
+		try: del self.world
+		except: pass
+		# Create the new world
+		self.world = newWorld
+		self.mapView.scene().mapPainter.setWorld(self.world)
+		self.updateLevel()
+		# Move old graphics polygons onto the new world
+		for poly,cntry in zip(polys, self.world.country):
+			cntry.mapPolyObject = poly
 
 if __name__ == '__main__':
 	import sys

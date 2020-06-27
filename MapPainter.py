@@ -27,6 +27,9 @@ class MapPainter:
         self.legendTick = dict()
         for i in range(5, 9):
             self.legendTick[i] = [QColor(255, int(255 - k * tiers[i-5]), int(255 - k * tiers[i-5])) for k in range(i)]
+            if i > 6:
+                #reversed ticks for coup and insurgency indicators
+                self.legendTick[-i] = [k for k in reversed(self.legendTick[i])]
         
         # 4 - resource: yellow-orange-red and encyclopedia - green-black
         k = 36.42 #50 for range 5
@@ -47,16 +50,15 @@ class MapPainter:
             M_EVENTS: self.legendEvents,
             M_SPHINFL: self.legendSphere,  
         }
-        self.redWhiteGradientStepsByType = {M_INSG: 8, M_GOVTSTAB: 8, M_FINLPROB_USA: 5, M_FINLPROB_USSR: 5}
+        self.redWhiteGradientStepsByType = {M_INSG: 7, M_GOVTSTAB: 8, M_FINLPROB_USA: 5, M_FINLPROB_USSR: 5}
         # The following constatnt is used for creating in-game legend. Each map mode is associated
         # with the set of labels and the set of colors
         s = Local.strings
         self.mapModesLegend = {
             M_SPHINFL: (s[Local.TAG_SPHERE], self.legendSphere),
             M_EVENTS: (s[Local.TAG_EVENT], self.legendEvents),
-            #M_PRESTIGE: (s[Local.LEGEND][:5], self.legendTick[5]),
-            M_INSG: (s[Local.TAG_INSURGENCY], self.legendTick[7]),
-            M_GOVTSTAB: (s[Local.TAG_COUP_CHANCE], self.legendTick[8]),
+            M_INSG: (s[Local.TAG_INSURGENCY], self.legendTick[-7]),
+            M_GOVTSTAB: (s[Local.TAG_COUP_CHANCE], self.legendTick[-8]),
             M_FINLPROB_USA: (s[Local.FINL_PROB], self.legendTick[5]),
             M_FINLPROB_USSR: (s[Local.FINL_PROB], self.legendTick[5]),
             M_WAR: (s[Local.TAG_WARPEACE], self.legendWarPeace),
@@ -75,8 +77,14 @@ class MapPainter:
             self.mapModesLegend[i] = self.mapModesLegend[M_GOVTINTV_IN]
 
     def paint(self, mode, addArg):
-
-        #TODO set legend labels mode
+        """
+        Paint countries on the map and set their tooltip labels.
+        `mode` - a positive integer, current map mode
+        `addArg` - id of a currently selected country that should be painted in the black
+                   this argument is used in the international relations map modes only,
+                   left None in the other map modes
+        
+        """
         values = [self.getDisplayedValue(i.id, mode, addArg) for i in self.world.country]
         mean = sum(values) / len(values)
         _max = max(values)
@@ -99,11 +107,6 @@ class MapPainter:
                     if step == 0: step = 1
                     x = self.assertValue(255 - i / step)
                     color.append(QColor(255, x, 0) if mode < 35 else QColor(0, x, 0))
-            """arr_sorted = sorted(range(len(values)), key=values.__getitem__)
-            arr_sorted.reverse()
-            octiles = [i//10 for i in arr_sorted]
-            color = [0]*len(values)
-            for i in range(len(color)): color[arr_sorted[i]] = self.legendResrc[i // 10]"""
         # Prestige map - linear white-to-red gradient
         elif mode == M_PRESTIGE:
             for i in values:
@@ -126,6 +129,8 @@ class MapPainter:
                 color.append(QColor(255, x, x))
 
         if addArg != None: color[addArg] = QColor(Qt.black)
+
+        if mode == M_INSG: print([i.green() for i in color])
 
         # Set captions
         captions = [""]*len(color)
@@ -151,6 +156,12 @@ class MapPainter:
             c.mapPolyObject.setColor(col, caption)
 
     def getDisplayedValue(self, id, mode, addArg):
+        """
+        Return a value associated with the country of specified `id` and the current map mode (`mode`).
+        The international relations map modes require `addArg` to be an id of a source country,
+        in the other cases, `addArg` is left None.
+
+        """
         c, actor = self.world.country[id], None
         if addArg != None and mode < 22: actor = self.world.country[addArg]
         # value buffered turn-wise
@@ -207,16 +218,14 @@ class MapPainter:
 
     def createLegend(self, selection):
         """
-        Create current mapmode legend inside MapView's legend widget.
-
-        """
+        Create current mapmode legend inside MapView's legend widget."""
         if self.mapMode in self.mapModesLegend:
             m = self.mapModesLegend[self.mapMode]
             if m[0] != None:
                 title = Local.strings[Local.MAP_MODE_NAME][self.mapMode]
                 if 8 <= self.mapMode <= 21:
                     title += "<br>" + Local.strings[Local.DATA_COUNTRIES + selection.id][Local.CTRY_NAME]
-                self.parent.mapView.legendWidget.setLegend(title,m[1],m[0])#title, colors, captions
+                self.parent.mapView.legendWidget.setLegend(title,m[1],m[0]) #title, colors, captions
         else:
             colors = self.legendResrc if self.mapMode < 35 \
                 else self.legendEncyclopedia

@@ -162,6 +162,7 @@ class ControlPanel(QDockWidget):
 	def doChangeSides(self):
 		"""Action performed on releasing 'Switch player' button"""
 		self.parent.world.changeSides()
+		self.parent.setStatus(-1)
 		self.nextTurnButton.setEnabled(True)
 		self.updatePlayerNames()
 
