@@ -146,6 +146,11 @@ class MainWindow(QMainWindow):
 		# Move old graphics polygons onto the new world
 		for poly,cntry in zip(polys, self.world.country):
 			cntry.mapPolyObject = poly
+		# Reset the news window
+		self.newsWindow.setLocked(any((newWorld.winFlag, newWorld.ANWFlag, newWorld.NWFlag)))
+		self.newsWindow.question.setEnabled(False)
+		self.newsWindow.backDown.setEnabled(False)
+		self.newsWindow.filters[2 * newWorld.cmptr].setChecked(True)
 
 	def closeEvent(self, event):
 		if self.menu.options[0].isChecked():
