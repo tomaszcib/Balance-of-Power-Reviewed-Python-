@@ -240,8 +240,9 @@ class NewsWindow(QDialog):
     def reject(self):
         """Window can be closed during the crisis. If so, back down in the current crisis"""
         resBtn = QMessageBox.Yes
-        beingQuestioned = self.parent.world.beingQuestioned
-        if beingQuestioned or not self.table.isEnabled():
+        w = self.parent.world
+        beingQuestioned = w.beingQuestioned
+        if (beingQuestioned or not self.table.isEnabled()) and not any((w.ANWFlag, w.NWFlag, w.winFlag)):
             resBtn = QMessageBox.question(self, "Balance of Power",
                 Local.strings[Local.CRISIS_FILTER][6] + (Local.strings[Local.CRISIS_FILTER][7] if beingQuestioned else ""),
                 QMessageBox.Cancel|QMessageBox.Yes)
@@ -249,9 +250,9 @@ class NewsWindow(QDialog):
                 self.doLoose()
                 self.setLocked(False)
                 if beingQuestioned and len(self.news) == 0:
-                    self.parent.world.beingQuestioned = False
+                    w.beingQuestioned = False
                     self.setVisible(False)
-                    continueNextTurn(self.parent, self.parent.world)
+                    continueNextTurn(self.parent, w)
                 QDialog.reject(self)
             else: return
         QDialog.reject(self)
